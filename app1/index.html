@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        
+        <title> </title>
+        
+        <style>
+            #template{
+                display: none;
+            }
+            
+            .complete{
+                color: green;
+            }
+            
+            .incomplete{
+                color: yellow;
+            }
+        </style>
+    </head>
+    <body>
+        <div id = "template" class = "hidden panel panel-default">
+           <div class = "panel-heading">
+              <h3 class = "panel-title"></h3>
+           </div>
+   
+           <div class = "panel-body">
+          </div>
+        </div>
+
+    </body>
+    <script>
+        $.get("https://data.cityofchicago.org/resource/cdmx-wzbz.json?&$limit=100", function(response){
+            //console.log(response);
+            $.each(response, function(i, v){
+                //console.log(v);
+                $("body").append("<strong>" + v.service_request_number + "</strong>" + "<br>");
+                $("#template").clone().attr("id", "name" + i).removeClass("hidden").appendTo("body");
+                $("#name" + i).find(".panel-title").text(v.street_address);
+                $("#name" + i).find(".panel-body").text(v.status);
+                if(v.status == "Completed" || v.status == "Completed - Dup"){
+                    $("#name" + i).find(".panel-body").addClass("complete");
+                }
+                if(v.status == "Incomplete"){
+                    $("#name" + i).find(".panel-body").addClass("incomplete");
+                }
+                
+            });
+        });
+    </script>
+</html>
