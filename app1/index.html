@@ -16,42 +16,47 @@
             }
             
             .complete{
-                color: green;
+                background-color: lightgreen;
             }
             
             .incomplete{
-                color: yellow;
+                background-color: lightyellow;
             }
         </style>
     </head>
+    
     <body>
+        <div id = "results" class = "container">
         <div id = "template" class = "hidden panel panel-default">
            <div class = "panel-heading">
-              <h3 class = "panel-title"></h3>
+              <h3 class = "panel-title">
+                  
+              </h3>
            </div>
-   
            <div class = "panel-body">
-          </div>
+     
+           </div>
         </div>
-
     </body>
+    
     <script>
-        $.get("https://data.cityofchicago.org/resource/cdmx-wzbz.json?&$limit=100", function(response){
-            //console.log(response);
+        $.get("https://data.cityofchicago.org/resource/cdmx-wzbz.json?$limit=100", function(response){
             $.each(response, function(i, v){
-                //console.log(v);
-                $("body").append("<strong>" + v.service_request_number + "</strong>" + "<br>");
-                $("#template").clone().attr("id", "name" + i).removeClass("hidden").appendTo("body");
-                $("#name" + i).find(".panel-title").text(v.street_address);
-                $("#name" + i).find(".panel-body").text(v.status);
+              //console.log(v);
+                //$("#results").append("<strong>" + v.street_address + "</strong>" + "<br>");
+                $("#template").clone().attr("id", "name" + i).removeClass("hidden").appendTo("#results");
+                $("#name" + i).find(".panel-title").text(v.service_request_number);
+                $("#name" + i).find(".panel-body").html(v.street_address + "<br>" + v.status)
+                //$("#name" + i).find(".panel-body").text(v.status);
                 if(v.status == "Completed" || v.status == "Completed - Dup"){
-                    $("#name" + i).find(".panel-body").addClass("complete");
+                    $("#name" + i).find(".panel-heading").addClass("complete");
                 }
                 if(v.status == "Incomplete"){
-                    $("#name" + i).find(".panel-body").addClass("incomplete");
+                    $("#name" + i).find(".panel-heading").addClass("incomplete");
                 }
-                
+
+                });
             });
-        });
+        
     </script>
 </html>
