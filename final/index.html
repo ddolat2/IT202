@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" ></script>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Shrine (MDC-Web Example App)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" sizes="192x192" href="https://material.io/static/images/simple-lp/favicons/components-192x192.png">
+  <link rel="shortcut icon" href="https://material.io/static/images/simple-lp/favicons/components-72x72.png">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet"
+        href="https://unpkg.com/material-components-web@0.9.1/dist/material-components-web.min.css">
+  <link rel="stylesheet" href="app.css">
+  
+  <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCstd0FNhQY-CPsiFshU1_gDvVz1aO1cgw">
+  </script>
+  
+   <!-- TODO add manifest here -->
+  <link rel="manifest" href="./manifest.json">
+  
+   <!-- Add to home screen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Weather PWA">
+  <link rel="apple-touch-icon" href="images/icons/icon-152x152.png">
+  
+  <meta name="msapplication-TileImage" content="images/icons/icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#2F3BA2">
+  
+  
+</head>
+
+<body class="mdc-typography">
+  <header id="shrine-header"
+        class="mdc-toolbar mdc-toolbar--fixed mdc-theme--text-primary-on-background">
+  <div class="mdc-toolbar__row">
+    <section class="mdc-toolbar__section mdc-toolbar__section--align-start">
+      <a id="shrine-nav-icon" class="material-icons mdc-ripple-surface"  
+    href="#" 
+   aria-label="Click to show the navigation menu"
+   aria-controls="shrine-nav-menu"
+   data-mdc-auto-init="MDCRipple"
+   data-mdc-ripple-is-unbounded>menu</a>
+      <h1 id="shrine-logo"          
+          class="mdc-toolbar__title"><span>Shrine</span></h1>
+          <input id="gamename" type="text" onfocus="this.value=''" value="Enter a Game">
+          <button id="searchbutton" type="submit"><a href="#search">Search</a></button>
+    </section>
+  </div>
+</header>
+<aside id="shrine-nav-menu" class="mdc-temporary-drawer" data-mdc-auto-init="MDCTemporaryDrawer">
+  <nav class="mdc-temporary-drawer__drawer">
+    <header class="mdc-temporary-drawer__header"></header>
+    <nav class="mdc-temporary-drawer__content mdc-list">
+      <a class="mdc-list-item" href="#home">Home</a>
+      <a class="mdc-list-item" href="#map">Map</a>
+      
+    </nav>
+  </nav>
+</aside>
+
+<div id = "home" class = "starter screen">
+
+<main id="shrine-products" class="mdc-toolbar-fixed-adjust">
+    <h1>Popular Now</h1>
+    <div class="mdc-layout-grid" id="insert">
+  <div id="template" class="hidden mdc-layout-grid__cell">
+      <div class="mdc-card shrine-product-card">
+        <section class="mdc-card__primary">
+            <span class="mdc-card__title shrine-product-card__price">$20</span>
+        </section>
+        <img class="shrine-product-card__image" width="240" height="240" alt="Sunglasses" src="https://www.built.co.uk/c.3624292/a/img/no_image_available.jpeg?resizeid=2&resizeh=350&resizew=350">
+      </div>
+  </div>
+  </div>
+  </main>
+  </div>
+  <script src="https://unpkg.com/material-components-web@0.9.1/dist/material-components-web.min.js">
+</script>
+
+<div id = "search" class = "screen">
+    <main id="shrine-products" class="mdc-toolbar-fixed-adjust">
+    <ul id="insert2" class="mdc-list mdc-list--avatar-list">
+      <li id="template2" class="hidden mdc-list-item">
+        <img class="mdc-list-item__start-detail" src=""
+         width="56" height="56"></li>
+    </ul>
+    </main>
+</div>
+
+<div id = "map" class = "screen"></div>
+
+<script>
+    $(".hidden").hide();
+    function featuredGames() {
+      
+      //console.log($("#gamename").val());
+      fetch('https://cors-anywhere.herokuapp.com/https://api-2445582011268.apicast.io/games/?fields=name,cover,popularity&order=popularity:desc&&limit=9',{
+          method:'GET',
+          headers:{
+              'user-key':'1afcedacd824a5b1f6a66904d110b952',
+              'Accept':'application/json'
+          }
+      }
+      ).then((res)=> res.json()).then((resJSON) => {
+          $.each(resJSON, function(i, v){
+            var str = v.cover.url;
+            var res = str.replace("thumb", "cover_big");
+            var clone = $("#template").clone();
+            clone.attr("id","" + v.id).removeClass("hidden");
+            (clone).find(".mdc-card__title").text(v.name);
+            (clone).find("img").attr("src", res);
+            (clone).show();
+            $("#insert").append(clone);
+          })
+        })
+      }
+      featuredGames();
+</script>
+
+<script>
+    $(".hidden").hide();
+    function searchGames() {
+        $(".mdc-list-item").not("#template2").remove();
+      
+      console.log($("#gamename").val());
+      fetch('https://cors-anywhere.herokuapp.com/https://api-2445582011268.apicast.io/games/?fields=name,cover,summary,themes,screenshots&order=popularity:desc&limit=13&search=' + $("#gamename").val(),{
+          method:'GET',
+          headers:{
+              'user-key':'1afcedacd824a5b1f6a66904d110b952',
+              'Accept':'application/json'
+          }
+      }
+      ).then((res)=> res.json()).then((resJSON) => {
+          console.log('test', resJSON)
+          $.each(resJSON, function(i, v){
+            console.log(v);
+            var str = v.cover.url;
+            var res = str.replace("thumb", "cover_big");
+            var clone = $("#template2").clone();
+            clone.attr("id","" + v.id).removeClass("hidden");
+            (clone).append(v.name);
+            (clone).find("img").attr("src", res);
+            (clone).show();
+            $("#insert2").append(clone);
+          })
+        })
+        $(".screen").hide();
+        $("#search").show();
+      }
+      $("#searchbutton").on("click", searchGames);
+      
+      function getLocation(){
+        if ("geolocation" in navigator){
+          navigator.geolocation.getCurrentPosition(function(position) {
+            console.log(position.coords.latitude +" "+ position.coords.longitude);
+            initMap(position.coords.latitude, position.coords.longitude)
+          });
+        }
+        else {
+          alert("No Geolocation available")
+        }
+      }
+      
+      getLocation();
+      
+</script>
+
+<script>
+      function initMap(latitude, longitude) {
+        $.get("https://data.cityofchicago.org/resource/ce29-twzt.json", function(response){
+            var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: {lat: latitude, lng: longitude}
+            });
+            $.each(response, function(i, v){
+            var uluru = {lat: parseFloat(v.latitude), lng: parseFloat(v.longitude)};
+        
+            var marker = new google.maps.Marker({
+            position: uluru,
+            map: map
+            });
+        });
+       });
+      }
+      initMap();
+    </script>
+
+<script>
+    $(".starter").show();
+    $(document).ready(function(){
+        $(".mdc-list-item").on("click", function(){
+            $(".screen").hide();
+            var target = $(this).attr("href");
+            $(target).show();
+        });
+    });
+</script>
+            
+<script>
+  mdc.autoInit();
+  document.getElementById('shrine-nav-icon').addEventListener('click', function(evt) {
+    evt.preventDefault();
+    document.getElementById('shrine-nav-menu').MDCTemporaryDrawer.open = true;
+  });
+</script>
+</body>
+</html>
