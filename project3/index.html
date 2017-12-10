@@ -108,8 +108,6 @@
         function showResults() {
         $.get("https://data.cityofchicago.org/resource/cwig-ma7x.json", function(response){
             $.each(response, function(i, v){
-              //console.log(v);
-                //$("#results").append("<strong>" + v.street_address + "</strong>" + "<br>");
                 $("#template").clone().attr("id", "name" + i).removeClass("hidden").appendTo("#results");
                 $("#name" + i).find(".card-title").text(v.dba_name);
                 $("#name" + i).find(".card-text").html(v.address + "<br>" + v.inspection_date + "<br>" + v.results);
